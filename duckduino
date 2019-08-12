@@ -1,0 +1,137 @@
+// HID - Version: Latest 
+#include <HID.h>
+#include <Keyboard.h>
+#include <EasyNeoPixels.h>
+/*
+rubber duckino
+requires pro-micro or leonardo
+*/
+int pixNum=1;
+const int maxVal=128;//115200
+int pixPin=15;
+int buttonState = 0;
+
+
+
+#define OSX 0
+#define WINDOWS 1
+#define UBUNTU 2
+
+
+void setup()
+{
+      
+  pinMode(4, INPUT_PULLUP);
+  pinMode(13, OUTPUT);
+  setupEasyNeoPixels(pixPin, pixNum);
+  Serial.begin(9600);
+  Serial.print("hello world");
+}
+
+void loop()
+{
+  // read the state of the pushbutton value
+  buttonState = digitalRead(4);
+  // check if pushbutton is pressed.  if it is, the
+  // buttonState is HIGH
+  if (buttonState == HIGH) {
+    // turn LED on
+    //Keyboard.begin();
+    digitalWrite(13, HIGH);
+    writeEasyNeoPixel(0,0,0,100);
+    delay(100); // Delay a little bit to improve simulation performance
+    digitalWrite(13, LOW);
+     writeEasyNeoPixel(0,0,0,0);
+    delay(100); // Delay a little bit to improve simulation performance
+    Keyboard.begin();
+    run();
+  //  Keyboard.end();
+    delay(100); // Delay a little bit to improve simulation performance
+    Keyboard.end();
+    digitalWrite(13, HIGH);
+     writeEasyNeoPixel(0,100,0,0);
+    delay(100); // Delay a little bit to improve simulation performance
+    digitalWrite(13, LOW);
+     writeEasyNeoPixel(0,0,0,0);
+    delay(100); // Delay a little bit to improve simulation performance
+    //Keyboard.end();
+  } else {
+    // turn LED off
+    digitalWrite(13, LOW);
+  }
+  //delay(10); // Delay a little bit to improve simulation performance
+}
+void run()
+{
+  //Keyboard.println("Hello!");
+  writeEasyNeoPixel(0,100,0,0);
+
+     // CTRL-ALT-DEL:
+      Keyboard.press(KEY_LEFT_CTRL);
+      Keyboard.press(KEY_LEFT_ALT);
+      Keyboard.press(KEY_DELETE);
+      delay(1000);
+      Keyboard.releaseAll();
+      // Enter to confirm logout:
+      Keyboard.write(KEY_RETURN);
+
+/*
+  Serial.println("whats your OS");
+  Serial.println("0 for OSX");
+  Serial.println("1 for windows");
+  Serial.println("2 for LINUX");
+  logout(Serial.parseInt());
+*/
+
+  delay(250);
+  Serial.println("done");
+  delay(1000); // Delay a little bit to improve simulation performance
+  writeEasyNeoPixel(0,0,0,0);
+}
+
+
+void logout(int platform)
+{
+  switch (platform) {
+    case OSX:
+      Keyboard.press(KEY_LEFT_GUI);
+      // Shift-Q logs out:
+      Keyboard.press(KEY_LEFT_SHIFT);
+      Keyboard.press('Q');
+      delay(100);
+      Keyboard.releaseAll();
+      // enter:
+      Keyboard.write(KEY_RETURN);
+      break;
+    case WINDOWS:
+      // CTRL-ALT-DEL:
+      Keyboard.press(KEY_LEFT_CTRL);
+      Keyboard.press(KEY_LEFT_ALT);
+      Keyboard.press(KEY_DELETE);
+      delay(100);
+      Keyboard.releaseAll();
+      // ALT-l:
+      delay(2000);
+      Keyboard.press(KEY_LEFT_ALT);
+      Keyboard.press('l');
+      Keyboard.releaseAll();
+      break;
+    case UBUNTU:
+      // CTRL-ALT-DEL:
+      Keyboard.press(KEY_LEFT_CTRL);
+      Keyboard.press(KEY_LEFT_ALT);
+      Keyboard.press(KEY_DELETE);
+      delay(1000);
+      Keyboard.releaseAll();
+      // Enter to confirm logout:
+      Keyboard.write(KEY_RETURN);
+      break;
+  }
+
+
+  
+}
+
+
+
+
